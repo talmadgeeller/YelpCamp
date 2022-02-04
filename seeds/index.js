@@ -3,10 +3,18 @@ const colors = require('../styles/styles')
 const cities = require('./cities');
 const { places, descriptors } = require('./seedHelpers');
 const Campground = require('../models/campground');
+const onlineDatabase = true;
 
-mongoose.connect('mongodb://localhost:27017/yelp-camp', {
-    // Insert options here
-});
+if (onlineDatabase) {
+    mongoose.connect('mongodb://talmadge.tech/yelp-camp?authSource=admin', {
+        user: 'admin',
+        pass: 'qAV6e05XJv1kYO1ZzGz3VPYPS'
+    });
+} else {
+    mongoose.connect('mongodb://localhost:27017/yelp-camp', {
+        // Set options here
+    });
+}
 
 const db = mongoose.connection;
 

@@ -4,11 +4,18 @@ const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const colors = require('./styles/styles')
 const Campground = require('./models/campground');
+const onlineDatabase = true;
 
-// Connect to the database
-mongoose.connect('mongodb://localhost:27017/yelp-camp', {
-    // Insert options here
-});
+if (onlineDatabase) {
+    mongoose.connect('mongodb://talmadge.tech/yelp-camp?authSource=admin', {
+        user: 'admin',
+        pass: 'qAV6e05XJv1kYO1ZzGz3VPYPS'
+    });
+} else {
+    mongoose.connect('mongodb://localhost:27017/yelp-camp', {
+        // Set options here
+    });
+}
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "Connection Error:"));
