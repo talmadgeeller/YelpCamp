@@ -2,13 +2,14 @@ const mongoose = require('mongoose');
 const colors = require('../styles/styles')
 const cities = require('./cities');
 const { places, descriptors } = require('./seedHelpers');
+const { dbUser, dbPass, dbName, hostname } = require('./auth/auth')
 const Campground = require('../models/campground');
 const onlineDatabase = true;
 
 if (onlineDatabase) {
-    mongoose.connect('mongodb://talmadge.tech/yelp-camp?authSource=admin', {
-        user: 'admin',
-        pass: 'qAV6e05XJv1kYO1ZzGz3VPYPS'
+    mongoose.connect(`mongodb://${hostname}/${dbName}?authSource=${dbUser}`, {
+        user: dbUser,
+        pass: dbPass
     });
 } else {
     mongoose.connect('mongodb://localhost:27017/yelp-camp', {
