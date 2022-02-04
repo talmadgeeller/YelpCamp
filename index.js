@@ -78,7 +78,6 @@ app.delete('/campgrounds/:id', async (req, res) => {
     res.redirect('/campgrounds');
 });
 
-const serverHost = onlineDatabase ? hostname : 'localhost';
-app.listen(port, serverHost, () => {
+app.listen(port, 'localhost', () => {
     console.log(colors['red'], 'Serving on port 3000');
 });
