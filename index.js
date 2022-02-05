@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
+const ejsMate = require('ejs-mate');
 const methodOverride = require('method-override');
 const colors = require('./styles/styles')
 const { dbUser, dbPass, dbName, hostname, port } = require('./auth/auth')
@@ -27,6 +28,8 @@ db.once("open", () => {
 // Launches express application
 const app = express();
 
+// Overrides the default ejs engine with ejsMate
+app.engine('ejs', ejsMate);
 // Allows HTML Templating with JS
 app.set('view engine', 'ejs');
 // Sets the views directory in relation to executing directory
