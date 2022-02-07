@@ -38,11 +38,7 @@ const seedDB = async () => {
             description: 'Lorem ipsum dolor sit amet consectetur, adipisicing' +
                 'elit. Iure quidem, dignissimos voluptatibus a id officia. ' +
                 'Perspiciatis, adipisci corporis. Omnis, quae nihil dolorem ' +
-                'maxime eaque praesentium natus incidunt accusamus aspernatur ' +
-                'eius! Dignissimos voluptate alias illo asperiores quisquam ' +
-                'dolorum aliquid exercitationem, magnam aliquam modi vel, dicta ' +
-                'fuga ipsum assumenda voluptatibus qui hic doloribus. Illo ' +
-                'laboriosam quae odit nam commodi cupiditate error cumque.',
+                'maxime eaque praesentium natus incidunt accusamus aspernatur',
             price
         })
         await camp.save();
