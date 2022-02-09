@@ -2,13 +2,14 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
-const { campgroundSchema } = require('./schemas.js');
+const { campgroundSchema, reviewSchema } = require('./schemas.js');
 const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 const methodOverride = require('method-override');
 const colors = require('./styles/styles')
 const { dbUser, dbPass, dbName, hostname, port } = require('./auth/auth')
 const Campground = require('./models/campground');
+const Review = require('./models/review');
 const onlineDatabase = true;
 
 if (onlineDatabase) {
@@ -51,6 +52,15 @@ const validateCampground = (req, res, next) => {
     next();
 }
 
+const validateReview = (req, res, next) => {
+    const { error } = reviewSchema.validate(req.body);
+    if (error) {
+        const message = error.details.map(elem => elem.message).join(',');
+        throw new ExpressError(message, 400);
+    }
+    next();
+}
+
 // Handles HTTP routing for CRUD requests
 app.get('/', (req, res) => {
     res.render('home');
@@ -72,7 +82,8 @@ app.post('/campgrounds', validateCampground, catchAsync(async (req, res) => {
 }));
 
 app.get('/campgrounds/:id', catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id);
+    // Gets the campground and populates the object with the referenced reviews
+    const campground = await Campground.findById(req.params.id).populate('reviews');
     res.render('campgrounds/show', { campground });
 }));
 
@@ -91,6 +102,15 @@ app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
     res.redirect('/campgrounds');
+}));
+
+app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async (req, res) => {
+    const campground = await Campground.findById(req.params.id);
+    const review = new Review(req.body.review);
+    campground.reviews.push(review);
+    await review.save();
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
 }));
 
 // For every request, for every path
