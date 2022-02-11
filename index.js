@@ -6,10 +6,14 @@ const ExpressError = require('./utils/ExpressError');
 const session = require('express-session');
 const flash = require('connect-flash');
 const methodOverride = require('method-override');
-const colors = require('./styles/styles')
-const { dbUser, dbPass, dbName, hostname, port, sessionPass } = require('./auth/auth')
-const campgrounds = require('./routes/campgrounds');
-const reviews = require('./routes/reviews');
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const User = require('./models/user');
+const colors = require('./styles/styles');
+const { dbUser, dbPass, dbName, hostname, port, sessionPass } = require('./auth/auth');
+const campgroundRoutes = require('./routes/campgrounds');
+const reviewRoutes = require('./routes/reviews');
+const userRoutes = require('./routes/users');
 const onlineDatabase = true;
 
 if (onlineDatabase) {
@@ -54,20 +58,34 @@ const sessionConfig = {
     }
 }
 
+// Enables session storing, must be used before passport.session()
 app.use(session(sessionConfig));
 // Enables flash messages
 app.use(flash());
 
+// Initializes passport for persistent login sessions
+app.use(passport.initialize());
+app.use(passport.session());
+// Use local strategy to authenticate User
+passport.use(new LocalStrategy(User.authenticate()));
+
+// Tells passport how to serialize user based on User model
+passport.serializeUser(User.serializeUser());
+// Tells passport how to deserialize user based on User model
+passport.deserializeUser(User.deserializeUser());
+
 // Middleware to add flash messages to all response locals
 app.use((req, res, next) => {
+    res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     next();
 });
 
 // Forwards these URLs to their specific express routes
-app.use('/campgrounds', campgrounds);
-app.use('/campgrounds/:id/reviews', reviews);
+app.use('/campgrounds', campgroundRoutes);
+app.use('/campgrounds/:id/reviews', reviewRoutes);
+app.use('/', userRoutes);
 
 // Handles HTTP routing for CRUD requests
 app.get('/', (req, res) => {
