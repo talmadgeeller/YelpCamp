@@ -1,3 +1,4 @@
+if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -10,18 +11,18 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 const colors = require('./styles/styles');
-const { dbUser, dbPass, dbName, hostname, port, sessionPass } = require('./auth/auth');
+const { DB_USER, DB_PASS, DB_NAME, HOSTNAME, PORT, SESSION_PASS } = process.env;
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users');
 const onlineDatabase = true;
 
 if (onlineDatabase) {
-    mongoose.connect(`mongodb://${hostname}/${dbName}?authSource=${dbUser}`, {
-        user: dbUser,
-        pass: dbPass
+    mongoose.connect(`mongodb://${HOSTNAME}/${DB_NAME}?authSource=${DB_USER}`, {
+        user: DB_USER,
+        pass: DB_PASS
     });
-} else mongoose.connect('mongodb://localhost:27017/yelp-camp');
+} else mongoose.connect(`mongodb://localhost:27017/${DB_NAME}`);
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "Connection Error:"));
@@ -47,7 +48,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Options for configuring the session store
 const sessionConfig = {
-    secret: sessionPass,
+    secret: SESSION_PASS,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -104,6 +105,6 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render('error', { err });
 });
 
-app.listen(port, () => {
-    console.log(colors['red'], 'Serving on port 3000');
+app.listen(PORT, () => {
+    console.log(colors['red'], `Serving on port ${PORT}`);
 });
