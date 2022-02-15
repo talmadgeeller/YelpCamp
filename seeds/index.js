@@ -5,6 +5,12 @@ const { places, descriptors } = require('./seedHelpers');
 const { dbUser, dbPass, dbName, hostname } = require('../auth/auth')
 const Campground = require('../models/campground');
 const onlineDatabase = true;
+const mxbGeocoding = require('@mapbox/mapbox-sdk/services/geocoding')
+const mapBoxToken = 'pk.eyJ1IjoiaW52ZW50b3I5OCIsImEiOiJja3pvNGw3dGEyOXI5MnBzOGQ0eTlveXplIn0.pRSOEgYQQDduECJw5HrE0Q';
+const geocoder = mxbGeocoding({ accessToken: mapBoxToken });
+const multer = require('multer');
+const { storage } = require('../cloudinary');
+const upload = multer({ storage });
 
 if (onlineDatabase) {
     mongoose.connect(`mongodb://${hostname}/${dbName}?authSource=${dbUser}`, {
@@ -68,15 +74,21 @@ const imgArray = [
     'https://images.unsplash.com/photo-1444228250525-3d441b642d12?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHw0ODMyNTF8fHx8fHx8MTY0NDM3ODAyNA&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080',
     'https://images.unsplash.com/photo-1496545672447-f699b503d270?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHw0ODMyNTF8fHx8fHx8MTY0NDM3Nzk3Mw&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080',
     'https://source.unsplash.com/collection/483251',
-    'https://images.unsplash.com/photo-1496080174650-637e3f22fa03?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHw0ODMyNTF8fHx8fHx8MTY0NDIwMTMzMA&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080',
-    'https://res.cloudinary.com/athena2021/image/upload/v1644844211/YelpCamp/file_nwab3j.jpg'
+    'https://images.unsplash.com/photo-1496080174650-637e3f22fa03?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHw0ODMyNTF8fHx8fHx8MTY0NDIwMTMzMA&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080'
 ]
 
-const seedDB = async () => {
+const seedDB = async (req) => {
     await Campground.deleteMany({});
-    for (let img of imgArray.length) {
+    for (let img of imgArray) {
         const random1000 = Math.floor(Math.random() * 1000);
         const price = Math.floor(Math.random() * 20) + 10;
+        // Get geoData for the specified location
+        const geoData = await geocoder.forwardGeocode(
+            {
+                query: `${cities[random1000].city}, ${cities[random1000].state}`,
+                limit: 1
+            }
+        ).send();
         const camp = new Campground({
             author: '6207a16155e4ea7bd649d810',
             location: `${cities[random1000].city}, ${cities[random1000].state}`,
@@ -91,7 +103,8 @@ const seedDB = async () => {
                 'elit. Iure quidem, dignissimos voluptatibus a id officia. ' +
                 'Perspiciatis, adipisci corporis. Omnis, quae nihil dolorem ' +
                 'maxime eaque praesentium natus incidunt accusamus aspernatur',
-            price
+            price,
+            geometry: geoData.body.features[0].geometry
         })
         await camp.save();
     }
