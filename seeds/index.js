@@ -5,12 +5,7 @@ const { places, descriptors } = require('./seedHelpers');
 const { dbUser, dbPass, dbName, hostname } = require('../auth/auth')
 const Campground = require('../models/campground');
 const onlineDatabase = true;
-const mxbGeocoding = require('@mapbox/mapbox-sdk/services/geocoding')
-const mapBoxToken = 'pk.eyJ1IjoiaW52ZW50b3I5OCIsImEiOiJja3pvNGw3dGEyOXI5MnBzOGQ0eTlveXplIn0.pRSOEgYQQDduECJw5HrE0Q';
-const geocoder = mxbGeocoding({ accessToken: mapBoxToken });
-const multer = require('multer');
-const { storage } = require('../cloudinary');
-const upload = multer({ storage });
+const https = require('https');
 
 if (onlineDatabase) {
     mongoose.connect(`mongodb://${hostname}/${dbName}?authSource=${dbUser}`, {
@@ -28,6 +23,7 @@ const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
     console.log(colors['green'], "Database Connected");
+    getImagesList();
 });
 
 const sample = array => array[Math.floor(Math.random() * array.length)];
@@ -73,22 +69,50 @@ const imgArray = [
     'https://images.unsplash.com/photo-1499363536502-87642509e31b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHw0ODMyNTF8fHx8fHx8MTY0NDM3NzkyMA&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080',
     'https://images.unsplash.com/photo-1444228250525-3d441b642d12?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHw0ODMyNTF8fHx8fHx8MTY0NDM3ODAyNA&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080',
     'https://images.unsplash.com/photo-1496545672447-f699b503d270?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHw0ODMyNTF8fHx8fHx8MTY0NDM3Nzk3Mw&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080',
-    'https://source.unsplash.com/collection/483251',
     'https://images.unsplash.com/photo-1496080174650-637e3f22fa03?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHw0ODMyNTF8fHx8fHx8MTY0NDIwMTMzMA&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080'
 ]
 
-const seedDB = async (req) => {
+const sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
+
+const getImages = async () => {
+    let size = imgArray.length;
+    const url = 'https://source.unsplash.com/collection/483251';
+    let tmpImg = "";
+    let newPhoto = false;
+    while (imgArray.length < 250) {
+        console.log("Image Count:", imgArray.length);
+        newPhoto = false;
+        https.get(url, (res) => {
+            tmpImg = res.headers.location;
+
+            let id = tmpImg.substring(tmpImg.indexOf("photo-") + 6, tmpImg.indexOf("?crop"));
+
+            for (let j = 0; j < imgArray.length; j++) {
+                if (imgArray[j].includes(id)) break;
+                if (j === imgArray.length - 1) newPhoto = true;
+            }
+
+            if (newPhoto) imgArray.push(tmpImg);
+
+        }).on('error', (e) => {
+            console.error(e);
+        });
+        await sleep(1500);
+    }
+
+    if (imgArray.length > size) {
+        console.log(`${imgArray.length - size} New Images Added!`);
+    }
+}
+
+const seedDB = async () => {
     await Campground.deleteMany({});
+    await getImages();
     for (let img of imgArray) {
         const random1000 = Math.floor(Math.random() * 1000);
         const price = Math.floor(Math.random() * 20) + 10;
-        // Get geoData for the specified location
-        const geoData = await geocoder.forwardGeocode(
-            {
-                query: `${cities[random1000].city}, ${cities[random1000].state}`,
-                limit: 1
-            }
-        ).send();
         const camp = new Campground({
             author: '6207a16155e4ea7bd649d810',
             location: `${cities[random1000].city}, ${cities[random1000].state}`,
@@ -104,7 +128,13 @@ const seedDB = async (req) => {
                 'Perspiciatis, adipisci corporis. Omnis, quae nihil dolorem ' +
                 'maxime eaque praesentium natus incidunt accusamus aspernatur',
             price,
-            geometry: geoData.body.features[0].geometry
+            geometry: {
+                type: "Point",
+                coordinates: [
+                    cities[random1000].longitude,
+                    cities[random1000].latitude
+                ]
+            }
         })
         await camp.save();
     }
