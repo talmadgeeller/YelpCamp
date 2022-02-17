@@ -74,7 +74,7 @@ const sessionConfig = {
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
         maxAge: 1000 * 60 * 60 * 24 * 7,
         httpOnly: true,
-        //secure: process.env.NODE_ENV === 'production' ? true : false
+        secure: process.env.NODE_ENV === 'production' ? true : false
     }
 }
 
@@ -83,7 +83,7 @@ app.use(session(sessionConfig));
 // Enables flash messages
 app.use(flash());
 // // Enables helmet for additional security
-// app.use(helmet());
+//app.use(helmet({ contentSecurityPolicy: false }));
 
 // // Content security policy configuration
 // const scriptSrcUrls = [
