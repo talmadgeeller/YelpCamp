@@ -1,4 +1,4 @@
-if (process.env.NODE_ENV !== 'production') require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -77,6 +77,7 @@ const sessionConfig = {
         secure: process.env.NODE_ENV === 'production' ? true : false
     }
 }
+console.log(sessionConfig.cookie.secure);
 
 // Enables session storing, must be used before passport.session()
 app.use(session(sessionConfig));
