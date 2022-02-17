@@ -15,13 +15,17 @@ const { DB_USER, DB_PASS, DB_NAME, HOSTNAME, PORT, SESSION_PASS } = process.env;
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users');
+const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet');
+const MongoDBStore = require('connect-mongo');
 const onlineDatabase = true;
 
 if (onlineDatabase) {
-    mongoose.connect(`mongodb://${HOSTNAME}/${DB_NAME}?authSource=${DB_USER}`, {
-        user: DB_USER,
-        pass: DB_PASS
-    });
+    mongoose.connect(`mongodb://${HOSTNAME}/${DB_NAME}?authSource=${DB_USER}`,
+        {
+            user: DB_USER,
+            pass: DB_PASS
+        });
 } else mongoose.connect(`mongodb://localhost:27017/${DB_NAME}`);
 
 const db = mongoose.connection;
@@ -45,9 +49,25 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 // Allows express to serve static assets in the public directory
 app.use(express.static(path.join(__dirname, 'public')));
+// Sanitizes queries
+app.use(mongoSanitize({ replaceWith: '_' }));
+
+const store = MongoDBStore.create({
+    mongoUrl: `mongodb://${DB_USER}:${encodeURIComponent(DB_PASS)}@${HOSTNAME}/${DB_NAME}?authSource=${DB_USER}`,
+    secret: SESSION_PASS,
+    touchAfter: 24 * 3600
+})
+
+store.on("error", function (e) {
+    console.log("Session Store Error", e);
+});
+
+
 
 // Options for configuring the session store
 const sessionConfig = {
+    store,
+    name: 'session',
     secret: SESSION_PASS,
     resave: false,
     saveUninitialized: true,
@@ -55,7 +75,8 @@ const sessionConfig = {
         // Set to expire 1 week from now
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
         maxAge: 1000 * 60 * 60 * 24 * 7,
-        httpOnly: true
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production' ? true : false
     }
 }
 
@@ -63,6 +84,55 @@ const sessionConfig = {
 app.use(session(sessionConfig));
 // Enables flash messages
 app.use(flash());
+// Enables helmet for additional security
+app.use(helmet());
+
+// Content security policy configuration
+const scriptSrcUrls = [
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://api.mapbox.com/",
+    "https://kit.fontawesome.com/",
+    "https://cdnjs.cloudflare.com/",
+    "https://cdn.jsdelivr.net",
+];
+const styleSrcUrls = [
+    "https://kit-free.fontawesome.com/",
+    "https://cdn.jsdelivr.net/",
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.mapbox.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://fonts.googleapis.com/",
+    "https://use.fontawesome.com/",
+];
+const connectSrcUrls = [
+    "https://api.mapbox.com/",
+    "https://a.tiles.mapbox.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://b.tiles.mapbox.com/",
+    "https://events.mapbox.com/",
+];
+const fontSrcUrls = [];
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: [],
+            connectSrc: ["'self'", ...connectSrcUrls],
+            scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+            styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+            workerSrc: ["'self'", "blob:"],
+            objectSrc: [],
+            imgSrc: [
+                "'self'",
+                "blob:",
+                "data:",
+                "https://res.cloudinary.com/athena2021/",
+                "https://images.unsplash.com/",
+            ],
+            fontSrc: ["'self'", ...fontSrcUrls],
+        },
+    })
+);
 
 // Initializes passport for persistent login sessions
 app.use(passport.initialize());
