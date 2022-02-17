@@ -48,7 +48,7 @@ app.use(express.urlencoded({ extended: true }));
 // Allows other HTTP requests outside of GET and POST
 app.use(methodOverride('_method'));
 // Allows express to serve static assets in the public directory
-app.use(express.static('public'));
+app.use('/public', express.static(path.join(__dirname, '/public')));
 // Sanitizes queries
 app.use(mongoSanitize({ replaceWith: '_' }));
 
