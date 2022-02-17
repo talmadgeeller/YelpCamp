@@ -61,7 +61,7 @@ const sessionConfig = {
     store,
     name: 'session',
     secret: SESSION_PASS,
-    resave: false,
+    resave: true,
     saveUninitialized: true,
     cookie: {
         // Set to expire 1 week from now
