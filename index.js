@@ -49,7 +49,7 @@ app.use(mongoSanitize({ replaceWith: '_' }));
 const store = MongoDBStore.create({
     mongoUrl: DB_URL,
     secret: SESSION_PASS,
-    touchAfter: 24 * 3600
+    //touchAfter: 24 * 3600
 })
 
 store.on("error", function (e) {
