@@ -33,6 +33,8 @@ const app = express();
 
 // Overrides the default ejs engine with ejsMate
 app.engine('ejs', ejsMate);
+// Sets the application to trust the backend proxy server
+//app.set('trust proxy', 1);
 // Allows HTML Templating with JS
 app.set('view engine', 'ejs');
 // Sets the views directory in relation to executing directory
@@ -49,7 +51,7 @@ app.use(mongoSanitize({ replaceWith: '_' }));
 const store = MongoDBStore.create({
     mongoUrl: DB_URL,
     secret: SESSION_PASS,
-    //touchAfter: 24 * 3600
+    touchAfter: 24 * 3600
 })
 
 store.on("error", function (e) {
@@ -59,10 +61,11 @@ store.on("error", function (e) {
 // Options for configuring the session store
 const sessionConfig = {
     store,
+    proxy: true,
     name: 'session',
     secret: SESSION_PASS,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     cookie: {
         // Set to expire 1 week from now
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
