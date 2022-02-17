@@ -12,22 +12,16 @@ const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 const colors = require('./styles/styles');
 const { DB_USER, DB_PASS, DB_NAME, HOSTNAME, PORT, SESSION_PASS } = process.env;
+const DB_URL = `mongodb://${DB_USER}:${encodeURIComponent(DB_PASS)}@${HOSTNAME}/${DB_NAME}?authSource=${DB_USER}`;
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users');
 const mongoSanitize = require('express-mongo-sanitize');
 //const helmet = require('helmet');
 const MongoDBStore = require('connect-mongo');
-const onlineDatabase = true;
 
-if (onlineDatabase) {
-    mongoose.connect(`mongodb://${HOSTNAME}/${DB_NAME}?authSource=${DB_USER}`,
-        {
-            user: DB_USER,
-            pass: DB_PASS
-        });
-} else mongoose.connect(`mongodb://localhost:27017/${DB_NAME}`);
-
+// Connect to mongo database
+mongoose.connect(DB_URL);
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "Connection Error:"));
 db.once("open", () => {
@@ -53,7 +47,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(mongoSanitize({ replaceWith: '_' }));
 
 const store = MongoDBStore.create({
-    mongoUrl: `mongodb://${DB_USER}:${encodeURIComponent(DB_PASS)}@${HOSTNAME}/${DB_NAME}?authSource=${DB_USER}`,
+    mongoUrl: DB_URL,
     secret: SESSION_PASS,
     touchAfter: 24 * 3600
 })
@@ -77,7 +71,6 @@ const sessionConfig = {
         secure: process.env.NODE_ENV === 'production' ? true : false
     }
 }
-console.log(sessionConfig.cookie.secure);
 
 // Enables session storing, must be used before passport.session()
 app.use(session(sessionConfig));
