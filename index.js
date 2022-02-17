@@ -11,7 +11,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 const colors = require('./styles/styles');
-const { DB_USER, DB_PASS, DB_NAME, HOSTNAME, PORT, SESSION_PASS } = process.env;
+const { DB_USER, DB_PASS, DB_NAME, HOSTNAME, PORT, SESSION_PASS, NODE_ENV } = process.env;
 const DB_URL = `mongodb://${DB_USER}:${encodeURIComponent(DB_PASS)}@${HOSTNAME}/${DB_NAME}?authSource=${DB_USER}`;
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
@@ -33,8 +33,6 @@ const app = express();
 
 // Overrides the default ejs engine with ejsMate
 app.engine('ejs', ejsMate);
-// Sets the application to trust the backend proxy server
-//app.set('trust proxy', 1);
 // Allows HTML Templating with JS
 app.set('view engine', 'ejs');
 // Sets the views directory in relation to executing directory
@@ -61,7 +59,7 @@ store.on("error", function (e) {
 // Options for configuring the session store
 const sessionConfig = {
     store,
-    proxy: true,
+    proxy: NODE_ENV === 'production' ? true : false,
     name: 'session',
     secret: SESSION_PASS,
     resave: false,
@@ -71,8 +69,7 @@ const sessionConfig = {
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
         maxAge: 1000 * 60 * 60 * 24 * 7,
         httpOnly: true,
-        //secure: process.env.NODE_ENV === 'production' ? true : false
-        secure: true
+        secure: NODE_ENV === 'production' ? true : false
     }
 }
 
