@@ -24,6 +24,10 @@ module.exports.renderLogin = (req, res) => {
     res.render('users/login');
 }
 
+module.exports.showMap = (req, res) => {
+    res.render('location');
+};
+
 module.exports.login = (req, res) => {
     req.flash('success', 'Welcome back!');
     // Check if there was a return to URL, delete after use
