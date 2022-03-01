@@ -16,6 +16,7 @@ const DB_URL = `mongodb://${DB_USER}:${encodeURIComponent(DB_PASS)}@${HOSTNAME}/
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users');
+const starRoutes = require('./routes/stars');
 const mongoSanitize = require('express-mongo-sanitize');
 const MongoDBStore = require('connect-mongo');
 
@@ -100,6 +101,7 @@ app.use((req, res, next) => {
 app.use('/campgrounds', campgroundRoutes);
 app.use('/campgrounds/:id/reviews', reviewRoutes);
 app.use('/', userRoutes);
+app.use('/stars', starRoutes);
 
 // Handles HTTP routing for CRUD requests
 app.get('/', (req, res) => {

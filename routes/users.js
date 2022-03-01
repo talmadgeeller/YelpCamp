@@ -15,6 +15,4 @@ router.route('/login')
 
 router.get('/logout', users.logout);
 
-router.get('/stars', users.showMap);
-
 module.exports = router;

@@ -11,32 +11,36 @@
 </head>
 
 <body>
+  <button onclick="document.querySelector('#download-svg').click()">
+    Download SVG
+  </button>
   <div style="overflow:hidden;">
     <div id="celestial-map"></div>
   </div>
   <div id="celestial-form"></div>
 
+
   <script type="text/javascript">
-    const width = 0;
+    const width = '<%- width %>';
     // Customizations
-    const starColor = '#ffe224';
-    const starOpacity = 1;
-    const starSize = 7;
-    const backgroundColor = '#000000';
-    const constellationColor = '#ffffff';
-    const constellationOpacity = 1;
-    const constellationWidth = 1;
-    const graticuleColor = '#ffffff';
-    const graticuleOpacity = 0.35;
-    const graticuleWidth = 0.6;
-    const graticuleDash = 1;
-    const latitude = 39.434;
-    const longitude = -77.096;
-    const year = 2021;
-    const month = 10;
-    const day = 16;
-    const hour = 0;
-    const minute = 0;
+    const starColor = '<%- starColor %>';
+    const starOpacity = '<%- starOpacity %>';
+    const starSize = '<%- starSize %>';
+    const backgroundColor = '<%- backgroundColor %>';
+    const constellationColor = '<%- constellationColor %>';
+    const constellationOpacity = '<%- constellationOpacity %>';
+    const constellationWidth = '<%- constellationWidth %>';
+    const graticuleColor = '<%- graticuleColor %>';
+    const graticuleOpacity = '<%- graticuleOpacity %>';
+    const graticuleWidth = '<%- graticuleWidth %>';
+    const graticuleDash = '<%- graticuleDash %>';
+    const latitude = '<%- latitude %>';
+    const longitude = '<%- longitude %>';
+    const year = '<%- year %>';
+    const month = '<%- month %>';
+    const day = '<%- day %>';
+    const hour = '<%- hour %>';
+    const minute = '<%- minute %>';
 
     Celestial.display({
       width: width,
