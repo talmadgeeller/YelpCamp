@@ -1,0 +1,42 @@
+<% layout('layouts/boilerplate') %>
+<div class="row">
+    <h1 class="text-center">Create New Star Map</h1>
+    <div class="col-md-6 offset-md-3">
+        <form action="/stars" method="POST" class="validated-form" novalidate>
+            <div class="mb-3">
+                <label class="form-label" for="backgroundColor">Globe Color</label>
+                <input class="form-control" type="text" name="config[backgroundColor]" id="backgroundColor">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="location">Location</label>
+                <input class="form-control" type="text" name="config[location]" id="location" required>
+                <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="date">Date</label>
+                <input class="form-control" type="date" name="config[date]" id="date" required>
+                <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="time">Time</label>
+                <input class="form-control" type="time" name="config[time]" id="time">
+                <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="starColor">Star Color</label>
+                <input class="form-control" type="text" name="config[starColor]" id="starColor">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="constellationColor">Constellation Color</label>
+                <input class="form-control" type="text" name="config[constellationColor]" id="constellationColor">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="exportData">Exported Selections from Star Map Customizer</label>
+                <textarea class="form-control" type="text" name="exportData" id="exportData"></textarea>
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-success">Generate Star Map</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -79,7 +79,7 @@
     var context = canvas.node().getContext("2d");
     context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 
-    var graticule = d3.geo.graticule().minorStep([15, 10]);
+    var graticule = d3.geo.graticule().minorStep([15, 20]);
 
     map = d3.geo.path().projection(mapProjection).context(context);
 
