@@ -126,8 +126,8 @@
       container.append("path").datum(circle).attr("class", "horizon");
       container.append("path").datum(daylight).attr("class", "daylight");
       //Celestial planes
-      if (cfg.transform === "equatorial") graticule.minorStep([15, 10]);
-      else graticule.minorStep([10, 10]);
+      if (cfg.transform === "equatorial") graticule.minorStep([15, 20]);
+      else graticule.minorStep([20, 30]);
       for (var key in cfg.lines) {
         if (!has(cfg.lines, key)) continue;
         if (key === "graticule") {
@@ -4618,7 +4618,7 @@
       styles[groupNames[i]] = {};
     }
 
-    var graticule = d3.geo.graticule().minorStep([15, 10]);
+    var graticule = d3.geo.graticule().minorStep([15, 20]);
 
     var map = d3.geo.path().projection(projection);
 
@@ -5327,7 +5327,21 @@
        .attr(":inkscape:window-maximized", "1");*/
       if (fname) {
         var blob = new Blob([svg.node().outerHTML], { type: "image/svg+xml;charset=utf-8" });
+        // TODO manipulate blob
+        var file = new File([blob], "name");
+        var reader = new FileReader();
+        reader.onload = function (progressEvent) {
+          // Entire file
+          console.log(this.result);
 
+          // By lines
+          var lines = this.result.split('\n');
+          for (var line = 0; line < lines.length; line++) {
+            console.log(lines[line]);
+          }
+        };
+
+        reader.readAsText(file);
         var a = d3.select("body").append("a").node();
         a.download = fname || "d3-celestial.svg";
         a.rel = "noopener";

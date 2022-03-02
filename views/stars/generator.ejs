@@ -3,35 +3,52 @@
 
 <head>
   <meta charset="utf-8">
-  <title>D3-Celestial Starmap</title>
+  <title>Starmap</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="/stylesheets/index.css">
   <script type="text/javascript" src="/javascripts/d3.min.js"></script>
   <script type="text/javascript" src="/javascripts/d3.geo.projection.min.js"></script>
   <script type="text/javascript" src="/javascripts/celestial.min.js"></script>
   <link rel="stylesheet" href="/stylesheets/celestial.css">
 </head>
 
-<body>
-  <button onclick="document.querySelector('#download-svg').click()">
-    Download SVG
-  </button>
-  <div style="overflow:hidden;">
-    <div id="celestial-map"></div>
-  </div>
-  <div id="celestial-form"></div>
-
+<body class="d-flex flex-column vh-100">
+  <%- include('../partials/navbar') %>
+  <main class="container mt-3">
+    <%- include('../partials/flash') %>
+    <button class="btn btn-primary" onclick="document.querySelector('#download-svg').click()">
+      Download SVG
+    </button>
+    <div style="overflow:hidden;">
+      <div id="celestial-map"></div>
+    </div>
+    <div id="celestial-form"></div>
+    <footer id="d3-celestial-footer">
+      <p><a href="https://github.com/ofrohn/d3-celestial"><strong>D3-Celestial</strong></a> released under <a
+          href="http://opensource.org/licenses/BSD-3-Clause">BSD license</a>. Copyright 2015-19 <a
+          href="http://armchairastronautics.blogspot.com/" rel="author">Olaf Frohn</a>.</p>
+    </footer>
+  </main>
+  <%- include('../partials/footer') %>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+  <script src="/javascripts/validateForms.js"></script>
 
   <script type="text/javascript">
     const width = '<%- width %>';
-    // Customizations
     const starColor = '<%- starColor %>';
     const starOpacity = '<%- starOpacity %>';
     const starSize = '<%- starSize %>';
     const backgroundColor = '<%- backgroundColor %>';
     const constellationColor = '<%- constellationColor %>';
     const constellationOpacity = '<%- constellationOpacity %>';
+    const showConstellationLines = '<%- showConstellationLines %>' === 'true';
     const constellationWidth = '<%- constellationWidth %>';
     const graticuleColor = '<%- graticuleColor %>';
     const graticuleOpacity = '<%- graticuleOpacity %>';
+    const showGraticule = '<%- showGraticule %>' === 'true';
     const graticuleWidth = '<%- graticuleWidth %>';
     const graticuleDash = '<%- graticuleDash %>';
     const latitude = '<%- latitude %>';
@@ -45,27 +62,39 @@
     Celestial.display({
       width: width,
       disableAnimations: true,
+      adaptable: true,
+      interactive: true,
       advanced: false,
       form: false,
-      controls: false,
-      formFields: { download: false },
+      formFields: {
+        "location": false,  // Set visiblity for each group of fields with the respective id
+        "general": true,
+        "stars": false,
+        "dsos": false,
+        "constellations": false,
+        "lines": false,
+        "other": false,
+        "download": false
+      },
+      controls: true,
+      //formFields: { download: false },
       location: false,
-      projection: "airy",
+      //projection: "airy",
+      projection: "azimuthalEqualArea",
       datapath: "/data/",
       planets: { show: false },
       dsos: { show: false },
       constellations: {
         names: false,      // Show constellation names 
-        lines: true,   // Show constellation lines, style below
+        lines: showConstellationLines,   // Show constellation lines, style below
         lineStyle: { stroke: `${constellationColor}`, width: constellationWidth, opacity: constellationOpacity }
       },
       mw: { show: false },
       lines: {  // Display & styles for graticule & some planes
         graticule: {
-          show: true, stroke: `${graticuleColor}`, width: graticuleWidth, opacity: graticuleOpacity, dash: [graticuleDash], // Sets the dashed lines
-          // grid values: "outline", "center", or [lat,...] specific position
+          // dash sets the dashed lines
+          show: showGraticule, stroke: `${graticuleColor}`, width: graticuleWidth, opacity: graticuleOpacity, dash: [graticuleDash],
           lon: { pos: [""], fill: "#eee", font: "10px Helvetica, Arial, sans-serif" },
-          // grid values: "outline", "center", or [lon,...] specific position
           lat: { pos: [""], fill: "#eee", font: "10px Helvetica, Arial, sans-serif" }
         },
         equatorial: { show: false },
@@ -95,15 +124,11 @@
 
     Celestial.skyview({ "location": [latitude, longitude] });
     Celestial.skyview({ "date": new Date(Date.UTC(year, month, day, hour, minute)) });
+    Celestial.Canvas.symbol();
     // Download SVG
     //document.querySelector('#download-svg').click();
   </script>
 
-  <footer id="d3-celestial-footer">
-    <p><a href="https://github.com/ofrohn/d3-celestial"><b>D3-Celestial</b></a> released under <a
-        href="http://opensource.org/licenses/BSD-3-Clause">BSD license</a>. Copyright 2015-19 <a
-        href="http://armchairastronautics.blogspot.com/" rel="author">Olaf Frohn</a>.</p>
-  </footer>
 </body>
 
 </html>

@@ -2,15 +2,17 @@ const starMapConfig = (query) => {
     return {
         width: 0,
         // Customizations
-        starColor: query.starColor || '#ffe224',
+        starColor: query.starColor || '#ffffff',
         starOpacity: query.starOpacity || 1,
         starSize: query.starSize || 7,
         backgroundColor: query.backgroundColor || '#000000',
         constellationColor: query.constellationColor || '#ffffff',
         constellationOpacity: query.constellationOpacity || 1,
+        showConstellationLines: query.showConstellationLines || true,
         constellationWidth: query.constellationWidth || 1,
         graticuleColor: query.graticuleColor || '#ffffff',
         graticuleOpacity: query.graticuleOpacity || 0.35,
+        showGraticule: query.showGraticule || true,
         graticuleWidth: query.graticuleWidth || 0.6,
         graticuleDash: query.graticuleDash || 1,
         latitude: query.latitude || 39.434,
