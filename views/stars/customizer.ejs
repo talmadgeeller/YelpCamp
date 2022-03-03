@@ -49,6 +49,10 @@
                 <pre id="result"></pre>
             </div>
             <div class="mb-3">
+                <label class="form-label" for="locationName">Customize Location Name</label>
+                <input class="form-control" type="text" placeholder="" name="config[locationName]" id="locationName">
+            </div>
+            <div class="mb-3">
                 <label class="form-label" for="customSaying">Custom Saying</label>
                 <input class="form-control" type="text" placeholder="Insert a memorable quote"
                     name="config[customSaying]" id="customSaying">
@@ -119,6 +123,7 @@
     // Get the geocoder results container.
     const results = document.getElementById('result');
     const locationField = document.getElementById('location');
+    const customLocationField = document.getElementById('locationName');
 
     // Add geocoder result to container.
     geocoder.on('result', (e) => {
@@ -145,8 +150,8 @@
             }
             place_name = `${e.result.text}, ${stateCode}, USA`;
         }
-
-        locationField.value = `{"coordinates": "${JSON.stringify(coordinates)}", "name": "${place_name.toUpperCase()}"}`;
+        customLocationField.value = place_name.toUpperCase();
+        locationField.value = `{"coordinates": "${JSON.stringify(coordinates)}"}`;
     });
 
     // Clear results container when search is cleared.
