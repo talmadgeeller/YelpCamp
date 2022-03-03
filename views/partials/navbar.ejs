@@ -1,22 +1,27 @@
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Talmadge.Tech</a>
+        <a class="navbar-brand" href="/">Talmadge.Tech</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
             aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-link" href="/">Home</a>
-                <a class="nav-link active" href="/campgrounds">Campgrounds</a>
-                <a class="nav-link" href="/campgrounds/new">New Campground</a>
+                <a class="nav-link<% if (page === "/") {%> active<% }%>" href="/">Home</a>
+                <a class="nav-link<% if (page === "/campgrounds") {%> active<% }%>" href="/campgrounds">Campgrounds</a>
+                <a class="nav-link<% if (page === "/campgrounds/new") {%> active<% }%>" href="/campgrounds/new">New
+                    Campground</a>
+                <% if (currentUser && authorized) { %>
+                <a class="nav-link<% if (page === "/stars/create") {%> active<% }%>" href="/stars/create">Create Star
+                    Map</a>
+                <% } %>
             </div>
             <div class="navbar-nav ms-auto">
                 <% if (!currentUser) { %>
-                <a class="nav-link" href="/login">Login</a>
-                <a class="nav-link" href="/register">Register</a>
+                <a class="nav-link<% if (page === "/login") {%> active<% }%>" href="/login">Login</a>
+                <a class="nav-link<% if (page === "/register") {%> active<% }%>" href="/register">Register</a>
                 <% } else {%>
-                <a class="nav-link" href="/logout">Logout</a>
+                <a class="nav-link<% if (page === "/logout") {%> active<% }%>" href="/logout">Logout</a>
                 <% } %>
             </div>
         </div>

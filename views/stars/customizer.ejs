@@ -3,35 +3,51 @@
     <h1 class="text-center">Create New Star Map</h1>
     <div class="col-md-6 offset-md-3">
         <form action="/stars" method="POST" class="validated-form" novalidate>
-            <div class="mb-3">
-                <label class="form-label" for="backgroundColor">Globe Color</label>
-                <input class="form-control" type="text" name="config[backgroundColor]" id="backgroundColor">
+            <div class="row pt-3">
+                <div class="col-6 col-xl-4">
+                    <div class="mb-3">
+                        <label class="form-label" for="backgroundColor">Globe Color</label>
+                        <input class="form-control" type="text" placeholder= "#000000" name="config[backgroundColor]" id="backgroundColor">
+                    </div>
+                </div>
+                <div class="col-6 col-xl-4">
+                    <div class="mb-3">
+                        <label class="form-label" for="starColor">Star Color</label>
+                        <input class="form-control" type="text" placeholder= "#ffffff" name="config[starColor]" id="starColor">
+                    </div>
+                </div>
+                <div class="col-6 col-xl-4">
+                    <div class="mb-3">
+                        <label class="form-label" for="constellationColor">Constellation Color</label>
+                        <input class="form-control" type="text" placeholder= "#ffffff" name="config[constellationColor]"
+                            id="constellationColor">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label class="form-label" for="date">Date</label>
+                        <input class="form-control" type="date" name="config[date]" id="date" required>
+                        <div class="valid-feedback">Looks good!</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label class="form-label" for="time">Time</label>
+                        <input class="form-control" type="time" name="config[time]" value="00:00:00" id="time">
+                        <div class="valid-feedback">Looks good!</div>
+                    </div>
+                </div>
             </div>
             <div class="mb-3">
                 <label class="form-label" for="location">Location</label>
-                <input class="form-control" type="text" name="config[location]" id="location" required>
-                <div class="valid-feedback">Looks good!</div>
+                <input class="form-control d-none" type="text" name="config[location]" id="location">
+                <div id="geocoder"></div>
+                <pre id="result"></pre>
             </div>
             <div class="mb-3">
-                <label class="form-label" for="date">Date</label>
-                <input class="form-control" type="date" name="config[date]" id="date" required>
-                <div class="valid-feedback">Looks good!</div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label" for="time">Time</label>
-                <input class="form-control" type="time" name="config[time]" id="time">
-                <div class="valid-feedback">Looks good!</div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label" for="starColor">Star Color</label>
-                <input class="form-control" type="text" name="config[starColor]" id="starColor">
-            </div>
-            <div class="mb-3">
-                <label class="form-label" for="constellationColor">Constellation Color</label>
-                <input class="form-control" type="text" name="config[constellationColor]" id="constellationColor">
-            </div>
-            <div class="mb-3">
-                <label class="form-label" for="exportData">Exported Selections from Star Map Customizer</label>
+                <label class="form-label" for="exportData">Import Selections from Star Map Customizer</label>
                 <textarea class="form-control" type="text" name="exportData" id="exportData"></textarea>
             </div>
             <div class="mb-3">
@@ -40,3 +56,71 @@
         </form>
     </div>
 </div>
+
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+<link rel="stylesheet"
+    href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css" type="text/css">
+<style>
+    #geocoder {
+        display: block;
+        width: 100%;
+        margin-top: 0.375rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border-radius: .25rem;
+        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out
+    }
+
+    .mapboxgl-ctrl-geocoder {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .mapboxgl-ctrl-geocoder,
+    .mapboxgl-ctrl-geocoder .suggestions {
+        box-shadow: none;
+    }
+
+    .mapboxgl-ctrl-geocoder--input:focus {
+        color: #212529;
+        background-color: #fff;
+        border-color: #86b7fe;
+        outline: 0;
+        box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
+        border-radius: .25rem;
+    }
+</style>
+<script>
+    mapboxgl.accessToken = '<%- process.env.MAPBOX_TOKEN %>';
+    const geocoder = new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        types: 'country,region,place,postcode,locality,neighborhood'
+    });
+
+    geocoder.addTo('#geocoder');
+
+    // Get the geocoder results container.
+    const results = document.getElementById('result');
+    const locationField = document.getElementById('location');
+
+    // Add geocoder result to container.
+    geocoder.on('result', (e) => {
+        //results.innerText = JSON.stringify(e.result, null, 2);
+        const coordinates = e.result.geometry.coordinates;
+        const place_name = e.result.place_name;
+        locationField.value = `{"coordinates": "${JSON.stringify(coordinates)}", "name": "${place_name}"}`;
+    });
+
+    // Clear results container when search is cleared.
+    geocoder.on('clear', () => {
+        results.innerText = '';
+    });
+</script>

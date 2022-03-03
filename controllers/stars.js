@@ -10,12 +10,13 @@ const starMapConfig = (query) => {
         starOpacity: query.starOpacity || 1,
         starSize: query.starSize || 7,
         backgroundColor: query.backgroundColor || '#000000',
+        outlineWidth: query.outlineWidth || 4,
         constellationColor: query.constellationColor || '#ffffff',
         constellationOpacity: query.constellationOpacity || 1,
         showConstellationLines: query.showConstellationLines || true,
-        constellationWidth: query.constellationWidth || 1,
+        constellationWidth: query.constellationWidth || 0.5,
         graticuleColor: query.graticuleColor || '#ffffff',
-        graticuleOpacity: query.graticuleOpacity || 0.35,
+        graticuleOpacity: query.graticuleOpacity || 0.6,
         showGraticule: query.showGraticule || true,
         graticuleWidth: query.graticuleWidth || 0.6,
         graticuleDash: query.graticuleDash || 1,
@@ -39,20 +40,11 @@ module.exports.renderCreateForm = (req, res) => {
 }
 
 module.exports.createStarMap = async (req, res, next) => {
-    // Get geoData for the specified location
-    const geoData = await geocoder.forwardGeocode(
-        {
-            query: req.body.config.location,
-            limit: 1
-        }
-    ).send();
     const config = req.body.config;
-    // Add geoData to the config's geometry
-    const coordinates = geoData.body.features[0].geometry.coordinates;
-    config.latitude = coordinates[1];
-    config.longitude = coordinates[0];
-    // Set author to the signed in user
-    config.author = req.user._id;
+    const location = JSON.parse(config.location);
+    const coord = JSON.parse(location.coordinates);
+    config.latitude = coord[1];
+    config.longitude = coord[0];
     req.flash('success', `Successfully created the custom star map!`);
     const queryString = generateQueryString(config, req.body.exportData);
     res.redirect(`/stars${queryString}`);

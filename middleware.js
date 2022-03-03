@@ -42,6 +42,16 @@ module.exports.isAuthor = async (req, res, next) => {
     next();
 }
 
+module.exports.isAuthorized = async (req, res, next) => {
+    // Authenticate
+    const validIDs = ['6207a16155e4ea7bd649d810', '6220bdc49da07c8132b0384d'];
+    if (!validIDs.includes(req.user._id.valueOf())) {
+        req.flash('error', 'You do not have permission to access that page!');
+        return res.redirect(`/campgrounds`);
+    }
+    next();
+}
+
 module.exports.isReviewAuthor = async (req, res, next) => {
     const { id, reviewId } = req.params;
     const review = await Review.findById(reviewId);
