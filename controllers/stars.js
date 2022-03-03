@@ -1,7 +1,3 @@
-const mxbGeocoding = require('@mapbox/mapbox-sdk/services/geocoding')
-const mapBoxToken = process.env.MAPBOX_TOKEN;
-const geocoder = mxbGeocoding({ accessToken: mapBoxToken });
-
 const starMapConfig = (query) => {
     return {
         width: 0,
@@ -22,6 +18,8 @@ const starMapConfig = (query) => {
         graticuleDash: query.graticuleDash || 1,
         latitude: query.latitude || 39.434,
         longitude: query.longitude || -77.096,
+        locationName: query.locationName || "MOUNT AIRY, MD, USA",
+        customSaying: query.customSaying || "",
         year: query.year || 2021,
         month: query.month || 10,
         day: query.day || 16,
@@ -41,10 +39,13 @@ module.exports.renderCreateForm = (req, res) => {
 
 module.exports.createStarMap = async (req, res, next) => {
     const config = req.body.config;
-    const location = JSON.parse(config.location);
-    const coord = JSON.parse(location.coordinates);
-    config.latitude = coord[1];
-    config.longitude = coord[0];
+    if (config.location) {
+        const location = JSON.parse(config.location);
+        const coord = JSON.parse(location.coordinates);
+        config.latitude = coord[1];
+        config.longitude = coord[0];
+        config.locationName = location.name;
+    }
     req.flash('success', `Successfully created the custom star map!`);
     const queryString = generateQueryString(config, req.body.exportData);
     res.redirect(`/stars${queryString}`);

@@ -7,19 +7,21 @@
                 <div class="col-6 col-xl-4">
                     <div class="mb-3">
                         <label class="form-label" for="backgroundColor">Globe Color</label>
-                        <input class="form-control" type="text" placeholder= "#000000" name="config[backgroundColor]" id="backgroundColor">
+                        <input class="form-control" type="text" placeholder="#000000" name="config[backgroundColor]"
+                            id="backgroundColor">
                     </div>
                 </div>
                 <div class="col-6 col-xl-4">
                     <div class="mb-3">
                         <label class="form-label" for="starColor">Star Color</label>
-                        <input class="form-control" type="text" placeholder= "#ffffff" name="config[starColor]" id="starColor">
+                        <input class="form-control" type="text" placeholder="#ffffff" name="config[starColor]"
+                            id="starColor">
                     </div>
                 </div>
                 <div class="col-6 col-xl-4">
                     <div class="mb-3">
                         <label class="form-label" for="constellationColor">Constellation Color</label>
-                        <input class="form-control" type="text" placeholder= "#ffffff" name="config[constellationColor]"
+                        <input class="form-control" type="text" placeholder="#ffffff" name="config[constellationColor]"
                             id="constellationColor">
                     </div>
                 </div>
@@ -47,8 +49,15 @@
                 <pre id="result"></pre>
             </div>
             <div class="mb-3">
+                <label class="form-label" for="customSaying">Custom Saying</label>
+                <input class="form-control" type="text" placeholder="Insert a memorable quote"
+                    name="config[customSaying]" id="customSaying">
+            </div>
+            <div class="mb-3">
                 <label class="form-label" for="exportData">Import Selections from Star Map Customizer</label>
-                <textarea class="form-control" type="text" name="exportData" id="exportData"></textarea>
+                <textarea class="form-control" type="text" name="exportData"
+                    placeholder="backgroundColor=%23000000&outlineColor=#ffffff&starColor=#ffffff&constellationColor=#ffffff&constellationOpacity=1&graticuleColor=#ffffff&graticuleOpacity=0.6&graticuleDash=1&constellationWidth=0.5&outlineWidth=4"
+                    id="exportData"></textarea>
             </div>
             <div class="mb-3">
                 <button class="btn btn-success">Generate Star Map</button>
@@ -115,8 +124,29 @@
     geocoder.on('result', (e) => {
         //results.innerText = JSON.stringify(e.result, null, 2);
         const coordinates = e.result.geometry.coordinates;
-        const place_name = e.result.place_name;
-        locationField.value = `{"coordinates": "${JSON.stringify(coordinates)}", "name": "${place_name}"}`;
+        let place_name = e.result.place_name;
+        const contextArr = e.result.context;
+        let country = "";
+        if (contextArr) {
+            for (let part of contextArr) {
+                if ((part.id).startsWith("country")) {
+                    country = part.text;
+                    break;
+                }
+            }
+        }
+        if ("United States" === country) {
+            let stateCode = "";
+            for (let part of contextArr) {
+                if ((part.id).startsWith("region")) {
+                    stateCode = part.short_code.substring(3);
+                    break;
+                }
+            }
+            place_name = `${e.result.text}, ${stateCode}, USA`;
+        }
+
+        locationField.value = `{"coordinates": "${JSON.stringify(coordinates)}", "name": "${place_name.toUpperCase()}"}`;
     });
 
     // Clear results container when search is cleared.
