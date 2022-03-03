@@ -94,7 +94,9 @@ const validIDs = ['6207a16155e4ea7bd649d810', '6220bdc49da07c8132b0384d'];
 // Middleware to add flash messages to all response locals
 app.use((req, res, next) => {
     res.locals.currentUser = req.user;
-    res.locals.authorized = validIDs.includes(req.user._id.valueOf());
+    if (req.user)
+        res.locals.authorized = validIDs.includes(req.user._id.valueOf());
+    else res.locals.authorized = false;
     res.locals.page = req.path;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
