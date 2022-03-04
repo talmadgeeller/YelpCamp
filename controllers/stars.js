@@ -6,6 +6,7 @@ const starMapConfig = (query) => {
         starOpacity: query.starOpacity || 1,
         starSize: query.starSize || 7,
         backgroundColor: query.backgroundColor || '#000000',
+        outlineColor: query.outlineColor || '#ffffff',
         outlineWidth: query.outlineWidth || 4,
         constellationColor: query.constellationColor || '#ffffff',
         constellationOpacity: query.constellationOpacity || 1,

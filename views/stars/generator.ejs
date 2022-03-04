@@ -61,6 +61,7 @@
     const starOpacity = '<%- starOpacity %>';
     const starSize = '<%- starSize %>';
     const backgroundColor = '<%- backgroundColor %>';
+    const outlineColor = '<%- outlineColor %>';
     const outlineWidth = '<%- outlineWidth %>';
     const constellationColor = '<%- constellationColor %>';
     const constellationOpacity = '<%- constellationOpacity %>';
@@ -125,8 +126,8 @@
       background: { // Background style
         fill: `${backgroundColor}`,   // Area fill
         opacity: 1,
-        stroke: `${backgroundColor}`, // Outline
-        width: 4
+        stroke: `${outlineColor}`, // Outline
+        width: outlineWidth
       },
       horizon: { show: false },
       stars: {
