@@ -1,6 +1,6 @@
 const starMapConfig = (query) => {
     return {
-        width: 0,
+        width: query.width || 0,
         // Customizations
         starColor: query.starColor || '#ffffff',
         starOpacity: query.starOpacity || 1,
