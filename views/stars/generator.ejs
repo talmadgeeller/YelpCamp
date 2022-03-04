@@ -56,29 +56,29 @@
   <script src="/javascripts/validateForms.js"></script>
 
   <script type="text/javascript">
-    const width = '<%- width %>';
+    const width = parseInt('<%- width %>');
     const starColor = '<%- starColor %>';
-    const starOpacity = '<%- starOpacity %>';
-    const starSize = '<%- starSize %>';
+    const starOpacity = parseFloat('<%- starOpacity %>');
+    const starSize = parseInt('<%- starSize %>');
     const backgroundColor = '<%- backgroundColor %>';
     const outlineColor = '<%- outlineColor %>';
-    const outlineWidth = '<%- outlineWidth %>';
+    const outlineWidth = parseFloat('<%- outlineWidth %>');
     const constellationColor = '<%- constellationColor %>';
-    const constellationOpacity = '<%- constellationOpacity %>';
+    const constellationOpacity = parseFloat('<%- constellationOpacity %>');
     const showConstellationLines = '<%- showConstellationLines %>' === 'true';
-    const constellationWidth = '<%- constellationWidth %>';
+    const constellationWidth = parseFloat('<%- constellationWidth %>');
     const graticuleColor = '<%- graticuleColor %>';
-    const graticuleOpacity = '<%- graticuleOpacity %>';
+    const graticuleOpacity = parseFloat('<%- graticuleOpacity %>');
     const showGraticule = '<%- showGraticule %>' === 'true';
-    const graticuleWidth = '<%- graticuleWidth %>';
-    const graticuleDash = '<%- graticuleDash %>';
+    const graticuleWidth = parseFloat('<%- graticuleWidth %>');
+    const graticuleDash = parseInt('<%- graticuleDash %>');
     const latitude = '<%- latitude %>';
     const longitude = '<%- longitude %>';
-    const year = '<%- year %>';
-    const month = '<%- month %>';
-    const day = '<%- day %>';
-    const hour = '<%- hour %>';
-    const minute = '<%- minute %>';
+    const year = parseInt('<%- year %>');
+    const month = parseInt('<%- month %>');
+    const day = parseInt('<%- day %>');
+    const hour = parseInt('<%- hour %>');
+    const minute = parseInt('<%- minute %>');
 
     Celestial.display({
       width: width,
