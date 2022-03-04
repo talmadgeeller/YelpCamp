@@ -77,5 +77,5 @@ function generateQueryString(queryObj, exportData) {
             else queryString += `${sym}${key}=${value}`;
         }
     });
-    return queryString.replace('#', '%23');
+    return queryString.replaceAll('#', '%23');
 }
