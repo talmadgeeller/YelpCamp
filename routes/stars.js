@@ -6,7 +6,7 @@ const stars = require('../controllers/stars');
 
 router.route('/')
     .get(isLoggedIn, isAuthorized, stars.showMap)
-    .post(isLoggedIn, isAuthorized, stars.createStarMap);
+    .post(isLoggedIn, isAuthorized, catchAsync(stars.createStarMap));
 
 router.get('/create', isLoggedIn, isAuthorized, catchAsync(stars.renderCreateForm));
 

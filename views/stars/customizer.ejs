@@ -4,21 +4,28 @@
     <div class="col-md-6 offset-md-3">
         <form action="/stars" method="POST" class="validated-form" novalidate>
             <div class="row pt-3">
-                <div class="col-6 col-xl-4">
+                <div class="col-6 col-xl-3">
                     <div class="mb-3">
                         <label class="form-label" for="backgroundColor">Globe Color</label>
                         <input class="form-control" type="text" placeholder="#000000" name="config[backgroundColor]"
                             id="backgroundColor">
                     </div>
                 </div>
-                <div class="col-6 col-xl-4">
+                <div class="col-6 col-xl-3">
+                    <div class="mb-3">
+                        <label class="form-label" for="outlineColor">Outline Color</label>
+                        <input class="form-control" type="text" placeholder="#ffffff" name="config[outlineColor]"
+                            id="outlineColor">
+                    </div>
+                </div>
+                <div class="col-6 col-xl-3">
                     <div class="mb-3">
                         <label class="form-label" for="starColor">Star Color</label>
                         <input class="form-control" type="text" placeholder="#ffffff" name="config[starColor]"
                             id="starColor">
                     </div>
                 </div>
-                <div class="col-6 col-xl-4">
+                <div class="col-6 col-xl-3">
                     <div class="mb-3">
                         <label class="form-label" for="constellationColor">Constellation Color</label>
                         <input class="form-control" type="text" placeholder="#ffffff" name="config[constellationColor]"
@@ -58,10 +65,14 @@
                     name="config[customSaying]" id="customSaying">
             </div>
             <div class="mb-3">
-                <label class="form-label" for="exportData">Import Selections from Star Map Customizer</label>
-                <textarea class="form-control" type="text" name="exportData"
-                    placeholder="backgroundColor=%23000000&outlineColor=#ffffff&starColor=#ffffff&constellationColor=#ffffff&constellationOpacity=1&graticuleColor=#ffffff&graticuleOpacity=0.6&graticuleDash=1&constellationWidth=0.5&outlineWidth=4"
-                    id="exportData"></textarea>
+                <label class="form-label" for="exportData">Import Customizations</label>
+                <textarea class="form-control" style="width: 300px; height: 160px" type="text" name="exportData"
+                    placeholder='{
+    "backgroundColor": "#ffffff",
+    "outlineColor": "#000000",
+    "starColor": "#000000",
+    "constellationColor": "#000000"
+}' id="exportData"></textarea>
             </div>
             <div class="mb-3">
                 <button class="btn btn-success">Generate Star Map</button>

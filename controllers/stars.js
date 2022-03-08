@@ -7,7 +7,7 @@ const starMapConfig = (query) => {
         starSize: query.starSize || 11,
         backgroundColor: query.backgroundColor || '#000000',
         outlineColor: query.outlineColor || '#ffffff',
-        outlineWidth: query.outlineWidth || 8,
+        outlineWidth: query.outlineWidth || 14,
         constellationColor: query.constellationColor || '#ffffff',
         constellationOpacity: query.constellationOpacity || 0.425,
         showConstellationLines: query.showConstellationLines || true,
@@ -46,15 +46,22 @@ module.exports.createStarMap = async (req, res, next) => {
         config.latitude = coord[1];
         config.longitude = coord[0];
     }
+    let exportData = req.body.exportData;
+    if (exportData)
+        exportData = JSON.parse(exportData);
     req.flash('success', `Successfully created the custom star map!`);
-    const queryString = generateQueryString(config, req.body.exportData);
+    const queryString = generateQueryString(config, exportData);
     res.redirect(`/stars${queryString}`);
 }
 
 function generateQueryString(queryObj, exportData) {
     let queryString = "";
     if (exportData !== "") {
-        queryString += `?${exportData}`;
+        Object.keys(exportData).forEach(function (key) {
+            let sym = queryString === "" ? "?" : "&";
+            const value = exportData[key];
+            queryString += `${sym}${key}=${value}`;
+        });
     }
     Object.keys(queryObj).forEach(function (key) {
         let sym = queryString === "" ? "?" : "&";
