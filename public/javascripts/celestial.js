@@ -5317,7 +5317,7 @@
         .attr("xmlns:sodipodi", "http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd")
         .attr("xmlns:inkscape", "http://www.inkscape.org/namespaces/inkscape")
         .attr("viewBox", " 0 0 " + (m.width) + " " + (m.height));
-
+      // TODO add customizations from template
       defs.append("style")
         .attr("type", "text\/css")
         .text(createStyles());
