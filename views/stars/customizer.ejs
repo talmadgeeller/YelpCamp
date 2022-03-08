@@ -66,11 +66,11 @@
             </div>
             <div class="mb-3">
                 <label class="form-label" for="exportData">Import Customizations</label>
-                <textarea class="form-control" style="width: 280px; height: 110px" type="text" name="exportData"
-                    placeholder=' "backgroundColor": "#000000",
- "outlineColor": "#ffffff",
- "starColor": "#ffffff",
- "constellationColor": "#ffffff"' id="exportData"></textarea>
+                <textarea class="form-control" id="customizations" style="width: 290px; height: 110px" type="text"
+                    name="exportData" placeholder='"backgroundColor": "#000000",
+"outlineColor": "#ffffff",
+"starColor": "#ffffff",
+"constellationColor": "#ffffff"' id="exportData"></textarea>
             </div>
             <div class="mb-3">
                 <button class="btn btn-success">Generate Star Map</button>
@@ -120,6 +120,36 @@
         border-radius: .25rem;
     }
 </style>
+<script>
+    const backgroundColor = document.querySelector('#backgroundColor');
+    const outlineColor = document.querySelector('#outlineColor');
+    const starColor = document.querySelector('#starColor');
+    const constellationColor = document.querySelector('#constellationColor');
+    const customizations = document.querySelector('#customizations');
+
+    backgroundColor.addEventListener('input', createExportData);
+    outlineColor.addEventListener('input', createExportData);
+    starColor.addEventListener('input', createExportData);
+    constellationColor.addEventListener('input', createExportData);
+
+    function createExportData() {
+        const results = {};
+
+        if (backgroundColor.value !== "")
+            results.backgroundColor = backgroundColor.value;
+        if (outlineColor.value !== "")
+            results.outlineColor = outlineColor.value;
+        if (starColor.value !== "")
+            results.starColor = starColor.value;
+        if (constellationColor.value !== "")
+            results.constellationColor = constellationColor.value;
+
+        if (Object.keys(results).length === 0)
+            customizations.innerText = "";
+        else
+            customizations.innerText = JSON.stringify(results, null, 1).replace("{", "").replace("}", "").trim();
+    }
+</script>
 <script>
     mapboxgl.accessToken = '<%- process.env.MAPBOX_TOKEN %>';
     const geocoder = new MapboxGeocoder({
