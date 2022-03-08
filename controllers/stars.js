@@ -1,6 +1,6 @@
 const starMapConfig = (query) => {
     return {
-        width: query.width || 0,
+        width: query.width || 1008,
         // Customizations
         starColor: query.starColor || '#ffffff',
         starOpacity: query.starOpacity || 1,
@@ -31,11 +31,11 @@ const starMapConfig = (query) => {
 
 module.exports.showMap = (req, res) => {
     const query = req.query;
-    res.render('stars/generator', starMapConfig(query));
+    return res.render('stars/generator', starMapConfig(query));
 };
 
 module.exports.renderCreateForm = (req, res) => {
-    res.render('stars/customizer');
+    return res.render('stars/customizer');
 }
 
 module.exports.createStarMap = async (req, res, next) => {
@@ -48,7 +48,7 @@ module.exports.createStarMap = async (req, res, next) => {
     }
     req.flash('success', `Successfully created the custom star map!`);
     const queryString = generateQueryString(config, req.body.exportData);
-    res.redirect(`/stars${queryString}`);
+    return res.redirect(`/stars${queryString}`);
 }
 
 function generateQueryString(queryObj, exportData) {

@@ -25,11 +25,7 @@
   <%- include('../partials/navbar') %>
   <main class="container mt-4">
     <%- include('../partials/flash') %>
-    <div class="row justify-content-center">
-      <div style="<% if (width != 0) {%>width: 1008px; <% }%>overflow:hidden;">
-        <div id="celestial-map"></div>
-      </div>
-    </div>
+    <div id="celestial-map" class="col align-items-center d-flex" style="flex-direction: column;"></div>
     <div id="celestial-form"></div>
     <div class="p-4">
       <div class="row text-center p-1">
@@ -184,6 +180,17 @@
     Celestial.Canvas.symbol();
     // Download SVG
     //document.querySelector('#download-svg').click();
+
+    // Fit star map better on smaller screen sizes
+    const mapDiv = document.querySelector('#celestial-map');
+    const canvas = mapDiv.querySelector('canvas');
+    const mapWidth = mapDiv.clientWidth;
+    if (mapWidth < 800) {
+      mapDiv.setAttribute("style", `min-width: ${mapWidth
+        }px; width: ${mapWidth}px; height: ${mapWidth}px`);
+      canvas.style.width = `${mapWidth}px`;
+      canvas.style.height = `${mapWidth}px`;
+    }
   </script>
 
   <script>
