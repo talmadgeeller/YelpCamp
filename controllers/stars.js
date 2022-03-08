@@ -46,17 +46,15 @@ module.exports.createStarMap = async (req, res, next) => {
         config.latitude = coord[1];
         config.longitude = coord[0];
     }
-    let exportData = req.body.exportData;
-    if (exportData)
-        exportData = JSON.parse(exportData);
     req.flash('success', `Successfully created the custom star map!`);
-    const queryString = generateQueryString(config, exportData);
+    const queryString = generateQueryString(config, req.body.exportData);
     res.redirect(`/stars${queryString}`);
 }
 
 function generateQueryString(queryObj, exportData) {
     let queryString = "";
-    if (exportData !== "") {
+    if (exportData && exportData !== "") {
+        exportData = JSON.parse(`{${exportData}}`);
         Object.keys(exportData).forEach(function (key) {
             let sym = queryString === "" ? "?" : "&";
             const value = exportData[key];
