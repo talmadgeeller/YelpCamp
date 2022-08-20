@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { campgroundSchema } = require('../schemas');
 const Review = require('./review');
+const User = require('./user');
 // Shorthand for typing mongoose.Schema
 const Schema = mongoose.Schema;
 
@@ -34,7 +35,7 @@ const CampgroundSchema = new Schema({
     location: String,
     author: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: User
     },
     reviews: [
         {
