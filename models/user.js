@@ -12,4 +12,5 @@ const UserSchema = new Schema({
 
 UserSchema.plugin(passportLocalMongoose);
 
-module.exports = mongoose.model('User', UserSchema);
+const mainDB = mongoose.connection.useDb('talmadge-tech');
+module.exports = mainDB.model('User', UserSchema);
