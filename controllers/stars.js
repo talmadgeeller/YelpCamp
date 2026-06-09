@@ -1,17 +1,17 @@
-const starMapConfig = (query) => {
+const starMapConfig = query => {
     return {
         width: query.width || 1008,
-        starColor: query.starColor || '#ffffff',
+        starColor: query.starColor || "#ffffff",
         starOpacity: query.starOpacity || 1,
         starSize: query.starSize || 11,
-        backgroundColor: query.backgroundColor || '#000000',
-        outlineColor: query.outlineColor || '#ffffff',
+        backgroundColor: query.backgroundColor || "#000000",
+        outlineColor: query.outlineColor || "#ffffff",
         outlineWidth: query.outlineWidth || 14,
-        constellationColor: query.constellationColor || '#ffffff',
+        constellationColor: query.constellationColor || "#ffffff",
         constellationOpacity: query.constellationOpacity || 0.425,
         showConstellationLines: query.showConstellationLines || true,
         constellationWidth: query.constellationWidth || 2,
-        graticuleColor: query.graticuleColor || '#ffffff',
+        graticuleColor: query.graticuleColor || "#ffffff",
         graticuleOpacity: query.graticuleOpacity || 0.6,
         showGraticule: query.showGraticule || true,
         graticuleWidth: query.graticuleWidth || 0.6,
@@ -24,18 +24,18 @@ const starMapConfig = (query) => {
         month: query.month || 10,
         day: query.day || 16,
         hour: query.hour || 0,
-        minute: query.minute || 0
-    }
-}
-
-module.exports.showMap = (req, res) => {
-    const query = req.query;
-    return res.render('stars/generator', starMapConfig(query));
+        minute: query.minute || 0,
+    };
 };
 
-module.exports.renderCreateForm = (req, res) => {
-    return res.render('stars/customizer');
-}
+module.exports.showMap = async (req, res) => {
+    const query = req.query;
+    return res.render("stars/generator", starMapConfig(query));
+};
+
+module.exports.renderCreateForm = async (req, res) => {
+    return res.render("stars/customizer");
+};
 
 module.exports.createStarMap = async (req, res, next) => {
     const config = req.body.config;
@@ -45,10 +45,10 @@ module.exports.createStarMap = async (req, res, next) => {
         config.latitude = coord[1];
         config.longitude = coord[0];
     }
-    req.flash('success', `Successfully created the custom star map!`);
+    req.flash("success", `Successfully created the custom star map!`);
     const queryString = generateQueryString(config, req.body.exportData);
     return res.redirect(`/stars${queryString}`);
-}
+};
 
 function generateQueryString(queryObj, exportData) {
     let queryString = "";
@@ -66,21 +66,19 @@ function generateQueryString(queryObj, exportData) {
         if (value !== "" && !queryString.includes(key)) {
             if (key === "date") {
                 if (!queryString.includes("year")) {
-                    const dates = value.split('-');
+                    const dates = value.split("-");
                     queryString += `${sym}year=${dates[0]}`;
                     queryString += `&month=${dates[1]}`;
                     queryString += `&day=${dates[2]}`;
                 }
-            }
-            else if (key === "time") {
+            } else if (key === "time") {
                 if (!queryString.includes("hour")) {
-                    const times = value.split(':');
+                    const times = value.split(":");
                     queryString += `${sym}hour=${times[0]}`;
                     queryString += `&minute=${times[1]}`;
                 }
-            }
-            else queryString += `${sym}${key}=${value}`;
+            } else queryString += `${sym}${key}=${value}`;
         }
     });
-    return queryString.replaceAll('#', '%23');
+    return queryString.replaceAll("#", "%23");
 }
