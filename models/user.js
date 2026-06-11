@@ -10,7 +10,7 @@ const UserSchema = new Schema({
     }
 });
 
-UserSchema.plugin(passportLocalMongoose);
+UserSchema.plugin(passportLocalMongoose, { usernameCaseInsensitive: true });
 
 const mainDB = mongoose.connection.useDb('talmadge-tech');
 module.exports = mainDB.model('User', UserSchema);
