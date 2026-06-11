@@ -50,7 +50,7 @@ module.exports.isAuthor = async (req, res, next) => {
 
 module.exports.isAuthorized = async (req, res, next) => {
     // Authenticate
-    const validIDs = ['6207a16155e4ea7bd649d810', '6220bdc49da07c8132b0384d'];
+    const validIDs = ['64009551bdf83c19b064cd2e', '6220bdc49da07c8132b0384d'];
     if (!validIDs.includes(req.user._id.valueOf())) {
         req.flash('error', 'You do not have permission to access that page!');
         return res.redirect(`/campgrounds`);
