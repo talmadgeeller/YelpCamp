@@ -1,10 +1,11 @@
 const User = require('../models/user');
+const { getDuplicateField } = require('../utils/mongoErrors');
 
 module.exports.renderRegister = (req, res) => {
     res.render('users/register');
 }
 
-module.exports.register = async (req, res) => {
+module.exports.register = async (req, res, next) => {
     try {
         const { email, username, password } = req.body;
         const user = new User({ email, username });
@@ -15,7 +16,14 @@ module.exports.register = async (req, res) => {
             res.redirect('/campgrounds');
         });
     } catch (err) {
-        req.flash('error', err.message);
+        // A duplicate email surfaces as a raw E11000 from the unique
+        // collation index on the shared talmadge-tech.users collection
+        // (see models/user.js) - give it the same friendly message as
+        // Athena-Web instead of the raw Mongo error text.
+        const message = getDuplicateField(err) === 'email'
+            ? 'An account with that email already exists. Try logging in instead.'
+            : err.message;
+        req.flash('error', message);
         res.redirect('/register');
     }
 }

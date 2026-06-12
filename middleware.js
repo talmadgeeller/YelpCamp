@@ -1,4 +1,4 @@
-const { campgroundSchema, reviewSchema } = require('./schemas.js');
+const { campgroundSchema, reviewSchema, userSchema } = require('./schemas.js');
 const ExpressError = require('./utils/ExpressError');
 const Campground = require('./models/campground');
 const Review = require('./models/review');
@@ -6,6 +6,15 @@ const Review = require('./models/review');
 module.exports.trimAuthFields = (req, res, next) => {
     if (typeof req.body.username === 'string') req.body.username = req.body.username.trim();
     if (typeof req.body.email === 'string') req.body.email = req.body.email.trim();
+    next();
+}
+
+module.exports.validateUser = (req, res, next) => {
+    const { error } = userSchema.validate(req.body);
+    if (error) {
+        const message = error.details.map(elem => elem.message).join(',');
+        throw new ExpressError(message, 400);
+    }
     next();
 }
 

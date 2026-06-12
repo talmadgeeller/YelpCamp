@@ -3,11 +3,11 @@ const router = express.Router({ mergeParams: true });
 const catchAsync = require('../utils/catchAsync');
 const passport = require('passport');
 const users = require('../controllers/users');
-const { trimAuthFields } = require('../middleware');
+const { trimAuthFields, validateUser } = require('../middleware');
 
 router.route('/register')
     .get(users.renderRegister)
-    .post(trimAuthFields, catchAsync(users.register));
+    .post(trimAuthFields, validateUser, catchAsync(users.register));
 
 router.route('/login')
     .get(users.renderLogin)
